@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Info</title>
+</head>
+<style>
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f7f7f7;
+    }
+
+    .title {
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    input[type="file"] {
+        display: block;
+        margin-top: 5px;
+        width: 100%;
+    }
+
+    .btn {
+        display: block;
+        margin: 0 auto;
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .result {
+        text-align: center;
+        margin-top: 20px;
+    }
+</style>
+
+<body>
+    <div class="container">
+        <h1 class="title">Video Info</h1>
+        <form action="/" method="POST">
+            <div class="form-group">
+                <label for="video-file">Select a video</label>
+                <input type="file" id="video-file" name="video" accept="video/*">
+            </div>
+            <button class="btn" type="submit">Get Info</button>
+        </form>
+        <h3 class="result" id="result"></h3>
+    </div>
+
+
+    <script>
+        const electron = require('electron');
+        const { ipcRenderer } = electron;
+
+        document.querySelector('form').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const { path } = document.querySelector('input').files[0];
+            console.log(path)
+            ipcRenderer.send('video:submit', path);
+        })
+
+        ipcRenderer.on('video:metadata', (event, duration) => {
+            document.getElementById('result').innerHTML = `Video is ${Math.round(duration)} seconds long!`;
+        })
+    </script>
+</body>
+
+</html>
